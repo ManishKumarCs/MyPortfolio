@@ -1,57 +1,77 @@
-# Manish Kumar — Portfolio
+# 💻 Manish Kumar — Full Stack Developer & AI Enthusiast
 
-React (CRA + craco) frontend, FastAPI + MongoDB backend for the contact form.
+![Portfolio Banner](https://manishdev.xyz/og-image.png)
 
-## Project structure
+Welcome to my personal portfolio — a showcase of my work, skills, and passion for building modern, scalable, and high-performance web applications using **React**, **Next.js**, **Node.js**, and **AI-powered solutions**.
 
-```
-frontend/   React app (this is what gets deployed as your site)
-backend/    FastAPI API — only used for the contact form (/api/contact)
-```
+---
 
-## Local setup
+## 🚀 **About This Portfolio**
 
-### 1. Backend
+This is my personal developer portfolio built with **Next.js 13 App Router**, featuring:
+- ⚡ **Server Components** for fast static rendering (SEO-friendly)
+- 🧩 **Client Components** for interactivity (Framer Motion, typing animation)
+- 📱 Fully responsive modern UI
+- 🎯 SEO & Open Graph optimized for social sharing
+- 🗂️ Clean, modular component structure
+
+---
+
+## 🌟 **Features**
+
+✅ Interactive Hero Section with typewriter effect  
+✅ Smooth animations with Framer Motion  
+✅ Dynamic contact section & social links  
+✅ Clean, minimal design inspired by best portfolio practices  
+✅ Structured data for better search ranking  
+✅ Deployed live at [https://manishdev.xyz](https://manishdev.xyz)
+
+---
+
+## 🛠️ **Tech Stack**
+
+- **Framework:** Next.js 13 (React)
+- **Styling:** Tailwind CSS
+- **Animations:** Framer Motion
+- **Hosting:** Vercel
+- **SEO:** Open Graph, Twitter Cards, Structured Data (Schema.org)
+
+---
+
+## ⚙️ Getting Started Locally
+
+1️⃣ **Clone the repo**
 
 ```bash
-cd backend
-python -m venv venv
-source venv/bin/activate      # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-```
+git clone https://github.com/ManishKumarCs/My-Portfolio.git
+cd My-Portfolio
+2️⃣ Install dependencies
 
-Edit `backend/.env`:
-- `MONGO_URL` — local Mongo (`mongodb://localhost:27017`) or a MongoDB Atlas connection string
-- `RESEND_API_KEY` — get a free key at https://resend.com
-- `OWNER_EMAIL` — your inbox for contact form submissions
+bash
+Copy
+Edit
+npm install
+3️⃣ Run the development server
 
-Run it:
-```bash
-uvicorn server:app --reload --port 8000
-```
+bash
+Copy
+Edit
+npm run dev
+4️⃣ Open http://localhost:3000 — your portfolio is live locally!
 
-### 2. Frontend
+🔗 Live Demo
+👉 Visit my portfolio live →
 
-```bash
-cd frontend
-yarn install
-yarn start
-```
-
-`frontend/.env` -> `REACT_APP_BACKEND_URL` should point at your backend
-(`http://localhost:8000` locally, your deployed API URL in production).
-
-### 3. Build for deployment
-
-```bash
-cd frontend
-yarn build
-```
-Deploy the `frontend/build` folder as a static site. Deploy `backend/` as its own
-service (needs Python + a MongoDB instance available).
-
-## Contact form email
-
-Contact form submissions are stored in MongoDB and emailed to you via
-Resend (https://resend.com). Free tier is enough for a portfolio. Sign up,
-grab an API key, and drop it into `backend/.env`.
+🧩 Folder Structure
+plaintext
+Copy
+Edit
+/app
+  ├── /components  → All reusable components
+  ├── page.js       → Server Component entry point
+  ├── layout.js     → Metadata & global layout
+  ├── globals.css   → Global styles
+/public
+  ├── /images       → Profile image, OG image, favicon, etc.
+❤️ Credits
+Built and maintained by Manish Kumar — feel free to fork & make it your own!
