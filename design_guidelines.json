@@ -1,0 +1,116 @@
+{
+  "project_context": {
+    "target_audience": "Recruiters, Engineering Managers, Tech Leads",
+    "vibe": "Awwwards-level, premium, mysterious yet highly professional. Think Apple meets Stripe with a cyberpunk/neon tech twist.",
+    "theme_mode": "dark"
+  },
+  "typography": {
+    "font_families": {
+      "heading": "Outfit, sans-serif",
+      "body": "Manrope, sans-serif",
+      "mono": "JetBrains Mono, monospace"
+    },
+    "rules": {
+      "headings": "Use tight letter spacing (tracking-tight or tracking-tighter). Never center align unless strictly needed for hero/balance.",
+      "labels": "Uppercase, tiny, wide spacing (tracking-[0.2em]) using the Mono font.",
+      "sizes": "H1 maxes at text-5xl to text-6xl (clamp). Do not use text-8xl or 9xl for standard headings. Ensure clear hierarchy gaps (e.g., text-5xl heading + text-xl subtitle)."
+    },
+    "installation_instructions": "Import Outfit, Manrope, and JetBrains Mono from Google Fonts in index.css."
+  },
+  "colors": {
+    "palette": {
+      "background": "#050505",
+      "foreground": "#FFFFFF",
+      "surface": "#0A0A0A",
+      "surface_elevated": "#121212",
+      "primary": "#00F0FF",
+      "primary_glow": "rgba(0, 240, 255, 0.5)",
+      "secondary": "#7000FF",
+      "border": "rgba(255, 255, 255, 0.1)",
+      "text_muted": "rgba(255, 255, 255, 0.6)"
+    },
+    "rules": {
+      "gradients": "Avoid generic full-screen gradients. Use subtle, localized radial glows behind key elements (e.g., behind the hero profile image or CTA buttons).",
+      "contrast": "Ensure text is highly legible. If placing text over glass/images, use text-shadow or ensure the background overlay is at least bg-black/50.",
+      "glassmorphism": "Use bg-white/5 or bg-black/40 with backdrop-blur-xl and a strict 1px border of border-white/10. Add a subtle inner shadow for depth."
+    }
+  },
+  "layouts_and_grids": {
+    "spacing": "Generous spacing. Use py-24 or py-32 for section paddings to let content breathe.",
+    "grid_modes": {
+      "bento": "For Skills and About sections. Use asymmetrical grids (e.g., grid-cols-1 md:grid-cols-4) where items span different rows/cols to create visual tension.",
+      "projects": "Use a heavy, editorial layout for case studies. Alternating left/right massive image showcases with overlapping text cards."
+    },
+    "alignment": "Prioritize left-alignment for text blocks. Asymmetry over perfect centering."
+  },
+  "motion_and_interactions": {
+    "libraries": {
+      "scroll": "lenis (for smooth momentum scrolling - MANDATORY)",
+      "animation": "framer-motion",
+      "marquee": "react-fast-marquee"
+    },
+    "behaviors": {
+      "hero_reveal": "Signature on-load masked line-by-line text reveal using framer-motion.",
+      "scroll_spy": "Navbar links must update active state based on scroll position.",
+      "hover_states": "Cards should slightly lift (-translate-y-1) and increase border glow on hover.",
+      "parallax": "Subtle parallax effect on the Hero profile image and Project showcase images.",
+      "marquee": "Use a slow, elegant editorial marquee in the 'About/Manifesto' section with large outline text."
+    }
+  },
+  "components": {
+    "Navbar": "Sticky at the top, highly blurred glassmorphism (backdrop-blur-2xl bg-black/50), 1px bottom border. Must contain scroll-spy links.",
+    "Hero": "Kinetic, bold. Contains availability badge (pulsing dot), typing effect for value prop, achievement counters, dual CTAs, and a striking silhouette image treated with neon spot lighting.",
+    "About": "Numbered manifesto chapters. Avoid generic 'Hi I am...' paragraphs. Use bold, high-contrast typography.",
+    "Skills": "Bento grid of hover cards. Categorized (Frontend, Backend, SDET/DevOps).",
+    "Experience": "A clean, vertical timeline with glowing nodes and subtle entry animations on scroll.",
+    "Projects": "Case study style for OMS, MediConnect, SwiftKart. Large spotlight-treated photography.",
+    "Problem_Solving": "An 'Engineering Dashboard' style section visualizing 300+ DSA problems solved. Dense, metric-focused (use Shadcn charts if possible).",
+    "Tech_Stack": "Animated cloud/grid of floating icons.",
+    "Contact": "Recruiter-focused contact form (real email via standard form action or mailto fallback). Neon submit button."
+  },
+  "media_and_images": {
+    "rules": "Never use placeholders. Use provided high-quality Unsplash/Pexels images. Treat images with deliberate overlays or grayscale + hover color reveals.",
+    "urls": {
+      "hero_profile": {
+        "url": "https://images.pexels.com/photos/16018144/pexels-photo-16018144.jpeg",
+        "description": "Silhouette of a programmer coding in a dark room - use as main hero visual with cyan/purple lighting"
+      },
+      "project_oms": {
+        "url": "https://images.unsplash.com/photo-1642132652860-471b4228023e",
+        "description": "Dashboard UI representing Order Management System"
+      },
+      "project_mediconnect": {
+        "url": "https://images.unsplash.com/photo-1767449441925-737379bc2c4d",
+        "description": "Medical App UI representing MediConnect"
+      },
+      "project_swiftkart": {
+        "url": "https://images.unsplash.com/photo-1757301714935-c8127a21abc6",
+        "description": "E-commerce checkout UI representing SwiftKart"
+      },
+      "about_background": {
+        "url": "https://images.pexels.com/photos/5926397/pexels-photo-5926397.jpeg",
+        "description": "Dark aesthetic programming background"
+      }
+    }
+  },
+  "icons": {
+    "library": "lucide-react",
+    "instructions": "Use for UI actions (arrows, links, download). For tech stack, use react-icons if specific brand logos are required, otherwise stick to abstract representations."
+  },
+  "accessibility_and_testing": {
+    "testing": "All interactive elements (buttons, links, form inputs) MUST include a data-testid attribute in kebab-case (e.g., data-testid='hero-cta-button').",
+    "contrast": "Ensure text over gradients/images passes WCAG standards.",
+    "motion": "Respect prefers-reduced-motion in CSS/Framer Motion."
+  },
+  "instructions_to_main_agent": [
+    "Strictly adhere to the dark theme, using the Obsidian background and Neon accents.",
+    "Implement smooth momentum scrolling using 'lenis' library. Wrap the app in a Lenis provider.",
+    "Use 'framer-motion' extensively for scroll-based reveals, stagger effects, and the kinetic hero.",
+    "Do NOT use generic centered text layouts for long paragraphs. Rely on the bento grid and Swiss asymmetry.",
+    "For the Problem Solving (DSA) section, build a metric-dense 'dashboard' card rather than a simple text list.",
+    "Ensure the contact form is functional (or clearly triggers a mailto link).",
+    "Ensure the resume preview/download button links to a public asset.",
+    "In index.css, do NOT apply a universal 'transition: all' rule.",
+    "Build custom HTML/Tailwind components for the complex marketing layouts (Hero, Bento, Projects) to avoid the rigidity of default Shadcn cards."
+  ]
+}
