@@ -55,7 +55,7 @@ const TechStack = () => {
             <a href={profile.github} target="_blank" rel="noreferrer" data-testid="github-profile-link" className="flex items-center gap-2 rounded-full glass px-5 py-2.5 text-sm font-medium text-white hover:bg-white/10 transition-colors"><Github size={18} /> @ManishKumarCs</a>
           </Reveal>
 
-          <div className="mt-8 grid lg:grid-cols-3 gap-4">
+          {/* <div className="mt-8 grid lg:grid-cols-3 gap-4">
             <Reveal className="lg:col-span-2 glass rounded-3xl p-6 sm:p-8">
               <div className="flex items-center justify-between mb-5">
                 <span className="text-sm text-white/60">Contribution activity</span>
@@ -90,7 +90,7 @@ const TechStack = () => {
                 ))}
               </div>
             </Reveal>
-          </div>
+          </div> */}
 
           {/* Pinned repos */}
           <div className="mt-4 grid md:grid-cols-3 gap-4">
@@ -113,7 +113,7 @@ const TechStack = () => {
         </div>
 
         {/* Testimonials placeholder */}
-        <div className="mt-20">
+        {/* <div className="mt-20">
           <Reveal><span className="font-mono text-xs uppercase tracking-[0.3em] text-[#00F0FF]">Testimonials</span>
             <h2 className="mt-4 font-heading text-4xl sm:text-5xl font-bold tracking-tighter">What colleagues say</h2>
           </Reveal>
@@ -136,7 +136,7 @@ const TechStack = () => {
           <Reveal delay={0.1} className="mt-4 text-center">
             <a href={profile.linkedin} target="_blank" rel="noreferrer" data-testid="testimonials-linkedin" className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-[#00F0FF] transition-colors"><Linkedin size={16} /> View recommendations on LinkedIn</a>
           </Reveal>
-        </div>
+        </div> */}
       </div>
     </section>
   );
