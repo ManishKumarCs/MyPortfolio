@@ -24,6 +24,13 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   const go = (id) => {
     setOpen(false);
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -38,24 +45,39 @@ const Navbar = () => {
       data-testid="navbar"
     >
       <div
-        className={`mx-auto max-w-7xl px-4 sm:px-6 transition-all duration-300 ${
-          scrolled ? "mt-3" : "mt-0"
+        className={`mx-auto max-w-7xl transition-all duration-300 ${
+          scrolled ? "mt-2 sm:mt-3" : "mt-0"
         }`}
+        style={{ paddingLeft: "clamp(0.5rem, 3vw, 1.5rem)", paddingRight: "clamp(0.5rem, 3vw, 1.5rem)" }}
       >
         <nav
-          className={`flex items-center justify-between rounded-2xl px-4 sm:px-6 py-3 transition-all duration-300 ${
+          className={`flex items-center justify-between rounded-2xl transition-all duration-300 ${
             scrolled ? "glass-dark border-glow" : "bg-transparent border border-transparent"
           }`}
+          style={{
+            paddingLeft: "clamp(0.625rem, 3vw, 1.5rem)",
+            paddingRight: "clamp(0.625rem, 3vw, 1.5rem)",
+            paddingTop: "clamp(0.5rem, 2vw, 0.75rem)",
+            paddingBottom: "clamp(0.5rem, 2vw, 0.75rem)",
+          }}
         >
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="flex items-center gap-2 group"
+            className="flex items-center group shrink-0 min-w-0"
+            style={{ gap: "clamp(0.375rem, 1.5vw, 0.5rem)" }}
             data-testid="logo-button"
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#00F0FF]/10 text-[#00F0FF] group-hover:bg-[#00F0FF]/20 transition-colors">
-              <Terminal size={18} />
+            <span
+              className="flex shrink-0 items-center justify-center rounded-lg bg-[#00F0FF]/10 text-[#00F0FF] group-hover:bg-[#00F0FF]/20 transition-colors"
+              style={{ height: "clamp(1.75rem, 6vw, 2.25rem)", width: "clamp(1.75rem, 6vw, 2.25rem)" }}
+            >
+              <Terminal size={16} className="sm:hidden" />
+              <Terminal size={18} className="hidden sm:block" />
             </span>
-            <span className="font-heading font-bold text-lg tracking-tight">
+            <span
+              className="font-heading font-bold tracking-tight whitespace-nowrap"
+              style={{ fontSize: "clamp(0.9rem, 3.5vw, 1.125rem)" }}
+            >
               Manish<span className="text-[#00F0FF]">.</span>
             </span>
           </button>
@@ -94,12 +116,14 @@ const Navbar = () => {
           </div>
 
           <button
-            className="lg:hidden h-9 w-9 grid place-items-center rounded-lg text-white"
+            className="lg:hidden grid place-items-center rounded-lg text-white shrink-0"
+            style={{ height: "clamp(1.75rem, 6vw, 2.25rem)", width: "clamp(1.75rem, 6vw, 2.25rem)" }}
             onClick={() => setOpen((o) => !o)}
             data-testid="mobile-menu-toggle"
             aria-label="Toggle menu"
+            aria-expanded={open}
           >
-            {open ? <X size={22} /> : <Menu size={22} />}
+            {open ? <X size={20} /> : <Menu size={20} />}
           </button>
         </nav>
 
@@ -109,7 +133,7 @@ const Navbar = () => {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="lg:hidden mt-2 glass-dark rounded-2xl p-4"
+              className="lg:hidden mt-2 glass-dark rounded-2xl p-3 sm:p-4 max-h-[75vh] overflow-y-auto"
               data-testid="mobile-menu"
             >
               <div className="flex flex-col gap-1">

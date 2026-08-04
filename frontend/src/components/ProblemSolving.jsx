@@ -5,23 +5,23 @@ import { Reveal, Counter } from "../lib/motion";
 
 const ProblemSolving = () => {
   return (
-    <section id="problem-solving" className="relative py-24 sm:py-32 border-t border-white/5">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-[600px] glow-violet opacity-40" />
+    <section id="problem-solving" className="relative py-16 sm:py-24 md:py-32 border-t border-white/5 overflow-hidden">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[280px] w-[90vw] max-w-[600px] sm:h-[400px] glow-violet opacity-40" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
         <Reveal className="max-w-2xl">
           <span className="font-mono text-xs uppercase tracking-[0.3em] text-[#00F0FF]">Problem Solving</span>
-          <h2 className="mt-4 font-heading text-4xl sm:text-5xl font-bold tracking-tighter">Engineering Dashboard</h2>
-          <p className="mt-5 text-white/60 leading-relaxed">
+          <h2 className="mt-4 font-heading text-3xl sm:text-5xl font-bold tracking-tighter">Engineering Dashboard</h2>
+          <p className="mt-5 text-white/60 leading-relaxed text-sm sm:text-base">
             300+ algorithmic problems solved in Java. Consistent practice sharpens the analytical thinking behind optimized, scalable production code.
           </p>
         </Reveal>
 
-        <div className="mt-14 grid lg:grid-cols-12 gap-4">
+        <div className="mt-10 sm:mt-14 grid lg:grid-cols-12 gap-4">
           {/* Big metric */}
-          <Reveal className="lg:col-span-4 glass rounded-3xl p-8 flex flex-col justify-between border-glow">
+          <Reveal className="lg:col-span-4 glass rounded-3xl p-6 sm:p-8 flex flex-col justify-between border-glow">
             <div className="flex items-center gap-2 text-[#00F0FF]"><Terminal size={18} /><span className="font-mono text-xs uppercase tracking-wider">DSA Solved</span></div>
             <div>
-              <div className="font-heading text-7xl font-black text-[#00F0FF] text-glow leading-none">
+              <div className="font-heading text-5xl sm:text-7xl font-black text-[#00F0FF] text-glow leading-none">
                 <Counter to={300} suffix="+" />
               </div>
               <p className="mt-3 text-white/50 text-sm">Problems across arrays, trees, graphs, DP, recursion, greedy & advanced structures.</p>
@@ -29,7 +29,7 @@ const ProblemSolving = () => {
           </Reveal>
 
           {/* Topic bars */}
-          <Reveal delay={0.1} className="lg:col-span-8 glass rounded-3xl p-8">
+          <Reveal delay={0.1} className="lg:col-span-8 glass rounded-3xl p-6 sm:p-8">
             <div className="flex items-center gap-2 mb-6 text-white/70"><Activity size={16} className="text-[#00F0FF]" /><span className="font-mono text-xs uppercase tracking-wider">Topic Proficiency</span></div>
             <div className="grid sm:grid-cols-2 gap-x-8 gap-y-5">
               {dsaTopics.map((t, i) => (
@@ -54,10 +54,10 @@ const ProblemSolving = () => {
         </div>
 
         {/* Stat strip */}
-        <div className="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {dsaStats.map((s, i) => (
-            <Reveal key={s.label} delay={i * 0.06} className="glass rounded-2xl p-6 text-center hover:border-[#00F0FF]/30 transition-colors">
-              <div className="font-heading text-3xl font-bold text-white">
+            <Reveal key={s.label} delay={i * 0.06} className="glass rounded-2xl p-4 sm:p-6 text-center hover:border-[#00F0FF]/30 transition-colors">
+              <div className="font-heading text-2xl sm:text-3xl font-bold text-white">
                 {s.text ? s.text : <><Counter to={s.value} />{s.suffix}</>}
               </div>
               <div className="mt-1 text-xs text-white/50">{s.label}</div>
@@ -65,7 +65,7 @@ const ProblemSolving = () => {
           ))}
         </div>
 
-        <Reveal delay={0.1} className="mt-6 glass rounded-2xl p-6 flex flex-wrap items-center justify-between gap-4">
+        <Reveal delay={0.1} className="mt-6 glass rounded-2xl p-5 sm:p-6 flex flex-wrap items-center justify-between gap-4">
           <p className="text-sm text-white/60 max-w-2xl">
             <span className="text-[#00F0FF] font-mono">philosophy:</span> Problem solving isn&apos;t about memorising patterns — it&apos;s about breaking ambiguity into tractable pieces and choosing the trade-off that scales.
           </p>

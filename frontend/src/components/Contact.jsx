@@ -36,43 +36,43 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="relative py-24 sm:py-32 border-t border-white/5">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[300px] w-[500px] glow-cyan opacity-40" />
+    <section id="contact" className="relative py-16 sm:py-24 md:py-32 border-t border-white/5 overflow-hidden">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[200px] w-[90vw] max-w-[500px] sm:h-[300px] glow-cyan opacity-40" />
 
       {/* Resume CTA */}
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
-        <Reveal className="glass rounded-3xl p-8 sm:p-12 border-glow flex flex-col lg:flex-row items-center justify-between gap-6 mb-20">
+        <Reveal className="glass rounded-3xl p-6 sm:p-8 md:p-12 border-glow flex flex-col lg:flex-row items-center justify-between gap-6 mb-14 sm:mb-20">
           <div>
             <span className="font-mono text-xs uppercase tracking-[0.3em] text-[#00F0FF]">Resume</span>
-            <h3 className="mt-3 font-heading text-3xl font-bold tracking-tight">Grab my ATS-friendly resume</h3>
-            <p className="mt-2 text-white/60 max-w-lg">One page, keyword-optimized, and recruiter-ready. Preview it or download the PDF.</p>
+            <h3 className="mt-3 font-heading text-2xl sm:text-3xl font-bold tracking-tight">Grab my ATS-friendly resume</h3>
+            <p className="mt-2 text-white/60 max-w-lg text-sm sm:text-base">One page, keyword-optimized, and recruiter-ready. Preview it or download the PDF.</p>
           </div>
-          <div className="flex gap-3 shrink-0">
+          <div className="flex flex-wrap gap-3 shrink-0">
             <a href={profile.resume} target="_blank" rel="noreferrer" data-testid="resume-preview" className="flex items-center gap-2 rounded-full glass px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"><FileText size={18} /> Preview</a>
             <a href={profile.resume} download data-testid="resume-download" className="flex items-center gap-2 rounded-full bg-[#00F0FF] px-5 py-3 text-sm font-semibold text-black hover:bg-white transition-colors"><Download size={18} /> Download PDF</a>
           </div>
         </Reveal>
 
-        <div className="grid lg:grid-cols-2 gap-12">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-12">
           {/* Left info */}
           <Reveal>
             <span className="font-mono text-xs uppercase tracking-[0.3em] text-[#00F0FF]">Contact</span>
-            <h2 className="mt-4 font-heading text-4xl sm:text-5xl font-bold tracking-tighter">Let&apos;s build something great together</h2>
-            <p className="mt-5 text-white/60 leading-relaxed max-w-lg">
+            <h2 className="mt-4 font-heading text-3xl sm:text-5xl font-bold tracking-tighter">Let&apos;s build something great together</h2>
+            <p className="mt-5 text-white/60 leading-relaxed max-w-lg text-sm sm:text-base">
               Hiring for a Software Engineer, Full Stack, Backend, or SDET role? I&apos;d love to connect and discuss how I can add value to your team.
             </p>
 
             <div className="mt-8 space-y-3">
               <a href={`mailto:${profile.email}`} data-testid="contact-email" className="flex items-center gap-4 glass rounded-xl p-4 hover:border-[#00F0FF]/40 transition-colors">
-                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#00F0FF]/10 text-[#00F0FF]"><Mail size={18} /></span>
-                <div><div className="text-xs text-white/40">Email</div><div className="text-sm text-white/80">{profile.email}</div></div>
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#00F0FF]/10 text-[#00F0FF]"><Mail size={18} /></span>
+                <div className="min-w-0"><div className="text-xs text-white/40">Email</div><div className="text-sm text-white/80 truncate">{profile.email}</div></div>
               </a>
               <a href={`tel:${profile.phone}`} className="flex items-center gap-4 glass rounded-xl p-4 hover:border-[#00F0FF]/40 transition-colors">
-                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#00F0FF]/10 text-[#00F0FF]"><Phone size={18} /></span>
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#00F0FF]/10 text-[#00F0FF]"><Phone size={18} /></span>
                 <div><div className="text-xs text-white/40">Phone</div><div className="text-sm text-white/80">{profile.phone}</div></div>
               </a>
               <div className="flex items-center gap-4 glass rounded-xl p-4">
-                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#00F0FF]/10 text-[#00F0FF]"><MapPin size={18} /></span>
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#00F0FF]/10 text-[#00F0FF]"><MapPin size={18} /></span>
                 <div><div className="text-xs text-white/40">Location</div><div className="text-sm text-white/80">{profile.location}</div></div>
               </div>
             </div>
@@ -91,7 +91,7 @@ const Contact = () => {
 
           {/* Form */}
           <Reveal delay={0.1}>
-            <form onSubmit={submit} className="glass rounded-3xl p-6 sm:p-8" data-testid="contact-form">
+            <form onSubmit={submit} className="glass rounded-3xl p-5 sm:p-6 md:p-8" data-testid="contact-form">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-mono uppercase tracking-wider text-white/50">Name *</label>
