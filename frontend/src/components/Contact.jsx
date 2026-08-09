@@ -9,25 +9,42 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const roleOptions = ["Full Stack Developer", "Backend Developer", "Software Engineer (SDE)", "SDET / Automation", "Internship", "Freelance", "Other"];
 
+// Simple, reliable RFC5322-lite pattern — catches the vast majority of
+// malformed emails without being overly strict about edge cases.
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
 const Contact = () => {
-  const [form, setForm] = useState({ name: "", email: "", company: "", role: roleOptions[0], message: "" });
+  const [form, setForm] = useState({ name: "", email: "", company: "", role: roleOptions[0], message: "", website: "" });
+  const [emailTouched, setEmailTouched] = useState(false);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
   const update = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
+  const emailValid = EMAIL_RE.test(form.email.trim());
+  const showEmailError = emailTouched && form.email.length > 0 && !emailValid;
+
   const submit = async (e) => {
     e.preventDefault();
+
     if (!form.name || !form.email || !form.message) {
       toast.error("Please fill in your name, email, and message.");
       return;
     }
+
+    if (!emailValid) {
+      setEmailTouched(true);
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
     setLoading(true);
     try {
       await axios.post(`${API}/contact`, form);
       setDone(true);
       toast.success("Message sent! Manish will get back to you shortly.");
-      setForm({ name: "", email: "", company: "", role: roleOptions[0], message: "" });
+      setForm({ name: "", email: "", company: "", role: roleOptions[0], message: "", website: "" });
+      setEmailTouched(false);
     } catch (err) {
       toast.error(err?.response?.data?.detail || "Something went wrong. Please email me directly.");
     } finally {
@@ -99,7 +116,21 @@ const Contact = () => {
                 </div>
                 <div>
                   <label className="text-xs font-mono uppercase tracking-wider text-white/50">Email *</label>
-                  <input type="email" value={form.email} onChange={update("email")} data-testid="contact-input-email" className="mt-2 w-full rounded-xl bg-white/[0.04] border border-white/10 px-4 py-3 text-sm text-white placeholder-white/30 focus:border-[#00F0FF]/60 focus:outline-none transition-colors" placeholder="you@manishdev.com" />
+                  <input
+                    type="email"
+                    value={form.email}
+                    onChange={update("email")}
+                    onBlur={() => setEmailTouched(true)}
+                    data-testid="contact-input-email"
+                    aria-invalid={showEmailError}
+                    className={`mt-2 w-full rounded-xl bg-white/[0.04] border px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none transition-colors ${
+                      showEmailError ? "border-red-500/60 focus:border-red-500" : "border-white/10 focus:border-[#00F0FF]/60"
+                    }`}
+                    placeholder="you@company.com"
+                  />
+                  {showEmailError && (
+                    <p className="mt-1.5 text-xs text-red-400">Please enter a valid email address.</p>
+                  )}
                 </div>
                 <div>
                   <label className="text-xs font-mono uppercase tracking-wider text-white/50">Company</label>
@@ -116,7 +147,26 @@ const Contact = () => {
                 <label className="text-xs font-mono uppercase tracking-wider text-white/50">Message *</label>
                 <textarea value={form.message} onChange={update("message")} rows={4} data-testid="contact-input-message" className="mt-2 w-full rounded-xl bg-white/[0.04] border border-white/10 px-4 py-3 text-sm text-white placeholder-white/30 focus:border-[#00F0FF]/60 focus:outline-none transition-colors resize-none" placeholder="Tell me about the opportunity..." />
               </div>
-              <button type="submit" disabled={loading || done} data-testid="contact-submit" className="mt-5 w-full flex items-center justify-center gap-2 rounded-full bg-[#00F0FF] px-6 py-3.5 text-sm font-semibold text-black hover:bg-white disabled:opacity-70 transition-colors">
+
+              {/* Honeypot — hidden from real users, bots that auto-fill every
+                  input will fill this and get silently rejected server-side. */}
+              <input
+                type="text"
+                name="website"
+                value={form.website}
+                onChange={update("website")}
+                style={{ position: "absolute", left: "-9999px", top: "auto", width: "1px", height: "1px", opacity: 0 }}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+              />
+
+              <button
+                type="submit"
+                disabled={loading || done || (emailTouched && !emailValid)}
+                data-testid="contact-submit"
+                className="mt-5 w-full flex items-center justify-center gap-2 rounded-full bg-[#00F0FF] px-6 py-3.5 text-sm font-semibold text-black hover:bg-white disabled:opacity-70 disabled:cursor-not-allowed transition-colors"
+              >
                 {loading ? <><Loader2 size={18} className="animate-spin" /> Sending...</> : done ? <><CheckCircle2 size={18} /> Sent!</> : <><Send size={18} /> Send Message</>}
               </button>
               <p className="mt-3 text-center text-xs text-white/30">Goes straight to my inbox — I reply within 24 hours.</p>

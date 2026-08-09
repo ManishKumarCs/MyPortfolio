@@ -3,11 +3,13 @@ from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
+import re
 import logging
 import uuid
 import httpx
+import dns.resolver
 from pathlib import Path
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, field_validator
 from typing import List, Optional
 from datetime import datetime, timezone, timedelta
 
@@ -46,6 +48,79 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+# ---------- Anti-spam config ----------
+
+# Common disposable / throwaway email providers used by spam bots.
+# Extend this list any time you spot a new one in your spam.
+DISPOSABLE_DOMAINS = {
+    "mailinator.com", "10minutemail.com", "guerrillamail.com", "tempmail.com",
+    "temp-mail.org", "throwawaymail.com", "yopmail.com", "trashmail.com",
+    "fakeinbox.com", "getnada.com", "maildrop.cc", "sharklasers.com",
+    "dispostable.com", "mintemail.com", "mailnesia.com", "spamgourmet.com",
+    "mytemp.email", "emailondeck.com", "moakt.com", "tempinbox.com",
+}
+
+# A submission whose "message" is basically just a phone number / digits
+# (exactly the pattern you were getting: "9175365080") is a strong bot signal.
+PHONE_ONLY_RE = re.compile(r"^[\s\d()+\-.]{5,}$")
+
+
+def is_probably_bot_message(message: str) -> bool:
+    stripped = message.strip()
+    if PHONE_ONLY_RE.match(stripped):
+        return True
+    # Too few actual letters relative to length also signals junk content
+    letters = sum(c.isalpha() for c in stripped)
+    if len(stripped) >= 5 and letters < 3:
+        return True
+    return False
+
+
+def has_valid_mx(domain: str) -> bool:
+    """Confirms the email domain actually has mail servers configured.
+    Blocks fake/typo domains bots often use."""
+    try:
+        answers = dns.resolver.resolve(domain, "MX", lifetime=5)
+        return len(answers) > 0
+    except Exception:
+        return False
+
+
+async def get_ip_location(ip: str) -> dict:
+    """Looks up city/region/country/ISP for an IP using ip-api.com (free, no key)."""
+    # Local/private IPs won't resolve to a real location
+    if ip in ("127.0.0.1", "localhost", "::1") or ip.startswith(("10.", "192.168.", "172.")):
+        return {"raw_ip": ip, "location": "Local/Unknown", "isp": "-"}
+    try:
+        async with httpx.AsyncClient(timeout=5) as http_client:
+            resp = await http_client.get(
+                f"http://ip-api.com/json/{ip}",
+                params={"fields": "status,country,regionName,city,isp,org,query"},
+            )
+        data = resp.json()
+        if data.get("status") == "success":
+            location = ", ".join(
+                filter(None, [data.get("city"), data.get("regionName"), data.get("country")])
+            )
+            return {
+                "raw_ip": ip,
+                "location": location or "Unknown",
+                "isp": data.get("isp") or data.get("org") or "Unknown",
+            }
+    except Exception as e:
+        logger.warning(f"IP geolocation lookup failed for {ip}: {e}")
+    return {"raw_ip": ip, "location": "Unknown", "isp": "Unknown"}
+
+
+def get_client_ip(request: Request) -> str:
+    """Extracts the real client IP, accounting for reverse proxies
+    (Render, Vercel, Nginx, etc. set X-Forwarded-For)."""
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.client.host if request.client else "unknown"
+
+
 # ---------- Models ----------
 class ContactCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=120)
@@ -53,6 +128,20 @@ class ContactCreate(BaseModel):
     role: Optional[str] = Field(default="", max_length=120)
     company: Optional[str] = Field(default="", max_length=120)
     message: str = Field(..., min_length=1, max_length=5000)
+    # Honeypot: real users never see/fill this field (hide it via CSS on the
+    # frontend). Bots that auto-fill every input will fill it, giving us
+    # away to silently reject them.
+    website: Optional[str] = Field(default="", max_length=200)
+
+    @field_validator("email")
+    @classmethod
+    def validate_email_domain(cls, v: str) -> str:
+        domain = v.split("@")[-1].lower()
+        if domain in DISPOSABLE_DOMAINS:
+            raise ValueError("Please use a permanent email address, not a disposable one.")
+        if not has_valid_mx(domain):
+            raise ValueError("This email domain doesn't appear to accept mail. Please check for typos.")
+        return v
 
 
 class Contact(BaseModel):
@@ -62,10 +151,13 @@ class Contact(BaseModel):
     role: str = ""
     company: str = ""
     message: str
+    ip: str = ""
+    location: str = ""
+    isp: str = ""
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
-def build_email_html(c: ContactCreate) -> str:
+def build_email_html(c: ContactCreate, location: str, isp: str, ip: str) -> str:
     return f"""
     <table width="100%" cellpadding="0" cellspacing="0" style="background:#050505;padding:32px 0;font-family:Arial,Helvetica,sans-serif;">
       <tr><td align="center">
@@ -82,7 +174,10 @@ def build_email_html(c: ContactCreate) -> str:
             <p style="margin:0 0 6px;color:#8a8a94;font-size:12px;">ROLE / OPPORTUNITY</p>
             <p style="margin:0 0 20px;color:#ffffff;font-size:15px;">{c.role or '—'}</p>
             <p style="margin:0 0 6px;color:#8a8a94;font-size:12px;">MESSAGE</p>
-            <p style="margin:0;color:#d4d4d8;font-size:15px;line-height:1.6;white-space:pre-line;">{c.message}</p>
+            <p style="margin:0 0 20px;color:#d4d4d8;font-size:15px;line-height:1.6;white-space:pre-line;">{c.message}</p>
+            <p style="margin:0 0 6px;color:#8a8a94;font-size:12px;">LOCATION (from IP)</p>
+            <p style="margin:0 0 6px;color:#d4d4d8;font-size:14px;">{location}</p>
+            <p style="margin:0;color:#5a5a63;font-size:12px;">IP: {ip} · ISP: {isp}</p>
           </td></tr>
           <tr><td style="padding:20px 32px;border-top:1px solid #1f1f24;">
             <p style="margin:0;color:#5a5a63;font-size:12px;">Reply directly to this email to reach {c.name}.</p>
@@ -157,6 +252,23 @@ async def root():
 @api_router.post("/contact", response_model=Contact)
 @limiter.limit("5/hour")
 async def create_contact(request: Request, payload: ContactCreate):
+    client_ip = get_client_ip(request)
+
+    # Honeypot check: if this hidden field has anything in it, a bot filled
+    # it. Return a fake-success response so the bot doesn't know to adapt,
+    # but don't save or email anything.
+    if payload.website.strip():
+        logger.info(f"Honeypot triggered from IP {client_ip} — silently dropping submission.")
+        return Contact(name=payload.name, email=payload.email, role=payload.role,
+                        company=payload.company, message=payload.message, ip=client_ip)
+
+    # Bot-pattern message check (e.g. message is just a phone number)
+    if is_probably_bot_message(payload.message):
+        raise HTTPException(
+            status_code=400,
+            detail="Please include a real message describing the opportunity, not just a phone number."
+        )
+
     # Duplicate-submission guard: same email + message within the last 2 minutes
     # is treated as a repeat click / retry, not a new inquiry.
     cutoff = (datetime.now(timezone.utc) - timedelta(minutes=2)).isoformat()
@@ -171,7 +283,15 @@ async def create_contact(request: Request, payload: ContactCreate):
     if existing:
         return existing
 
-    contact = Contact(**payload.model_dump())
+    # Look up location from IP
+    geo = await get_ip_location(client_ip)
+
+    contact = Contact(
+        **payload.model_dump(exclude={"website"}),
+        ip=client_ip,
+        location=geo["location"],
+        isp=geo["isp"],
+    )
     await db.contacts.insert_one(contact.model_dump())
 
     # Notify the owner — this one matters, so a failure here surfaces to the user.
@@ -179,7 +299,7 @@ async def create_contact(request: Request, payload: ContactCreate):
         await send_email(
             to=[OWNER_EMAIL],
             subject=f"Portfolio: {payload.name} — {payload.role or 'New message'}",
-            html=build_email_html(payload),
+            html=build_email_html(payload, geo["location"], geo["isp"], client_ip),
             reply_to=payload.email,
         )
     except httpx.HTTPStatusError as e:
